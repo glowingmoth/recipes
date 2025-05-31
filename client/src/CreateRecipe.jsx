@@ -1,0 +1,67 @@
+import { useState } from "react";
+
+export default function CreateRecipe() {
+  const [ingredientArray, setIngredientArray] = useState([1]);
+
+  function incrementIngredientCount(event) {
+    event.preventDefault();
+    setIngredientArray([...ingredientArray, ingredientArray.length + 1]);
+  }
+
+  // TODO: Make this delete the ingredient removed
+  function decrementIngredientCount(event) {
+    event.preventDefault();
+    if (ingredientArray.length === 1) return;
+    setIngredientArray(ingredientArray.slice(0, ingredientArray.length - 1));
+    console.log("after slice", ingredientArray);
+  }
+
+  return (
+    <form>
+      <div>
+        <label htmlFor="title">Title: </label>
+        <input name="title"></input>
+      </div>
+
+      <div>
+        <label htmlFor="author">Author: </label>
+        <input name="author"></input>
+      </div>
+
+      <div>
+        <label htmlFor="servings">Servings: </label>
+        <input name="servings"></input>
+      </div>
+
+      <div>
+        <label htmlFor="description">Description: </label>
+        <textarea name="description"></textarea>
+      </div>
+
+      <div>
+        Ingredients:
+        <div>
+          {ingredientArray.map((_, index) => {
+            return (
+              <div key={index}>
+                <label htmlFor="name">Name: </label>
+                <input name="name"></input>
+                <label htmlFor="amount">Amount: </label>
+                <input name="amount"></input>
+                <button onClick={decrementIngredientCount}>
+                  Remove Ingredient
+                </button>
+              </div>
+            );
+          })}
+        </div>
+        <button onClick={incrementIngredientCount}>Add Ingredient</button>
+      </div>
+
+      <div>
+        <label htmlFor="instructions">Instructions: </label>
+        <input name="instructions"></input>
+      </div>
+    </form>
+  );
+}
