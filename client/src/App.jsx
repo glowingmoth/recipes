@@ -4,7 +4,7 @@ import RecipeCard from "./recipeCard";
 function App() {
   return (
     <div className="app">
-      <h1>Home Recipes</h1>
+      <h1>Family Recipes</h1>
       <RecipeCard />
     </div>
   );

@@ -12,6 +12,8 @@ export default function RecipeCard() {
       { name: "psyllium husk", amount: "1 Tbsp" },
       { name: "butter", amount: "2 Tbsp" },
     ],
+    description:
+      "Light and fluffy and easy to make! This is an absolute family favourite. Top with a sweet spread of your choice, like maple syrup or jam.",
     instructions: [
       "In a large mixing bowl add the flour, eggs, milk and psyllium husk.",
       "Use a handheld mixer or equivalent to mix all the ingredients in the bowl until smooth.",
@@ -23,11 +25,20 @@ export default function RecipeCard() {
     createdAt: "2025-05-28T12:00:00Z",
   };
 
+  // TODO: Use URL from image host once connected
   return (
     <div className="recipeCard">
-      <div className="cardImage"></div>
+      <img
+        src="/src/assets/pancake_placeholder.jpg"
+        className="cardImage"
+        alt="Pancakes stacked on a plate"
+      ></img>
 
-      <h2>{recipe.title}</h2>
+      <div className="content">
+        <h2>{recipe.title}</h2>
+        <p>{recipe.description}</p>
+      </div>
+
       <div className="bottom">
         <span>Author: {recipe.author}</span>
         <span>Created: {recipe.createdAt}</span>

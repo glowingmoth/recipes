@@ -27,10 +27,16 @@
 
 .cardImage {
   grid-area: image;
+  object-fit: cover;
   width: 10em;
   height: 10em;
   border-radius: 0.5em;
-  background-color: lightgray;
+  /* background-color: lightgray; */
+}
+
+.content {
+  text-align: left;
+  font-weight: 300;
 }
 
 .bottom {
