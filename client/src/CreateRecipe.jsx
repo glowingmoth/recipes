@@ -8,13 +8,20 @@ export default function CreateRecipe() {
     setIngredientArray([...ingredientArray, ingredientArray.length + 1]);
   }
 
-  // TODO: Make this delete the ingredient removed
   function decrementIngredientCount(event) {
+    console.log({ id: event.target.id, ingredientArray });
+
     event.preventDefault();
     if (ingredientArray.length === 1) return;
-    setIngredientArray(ingredientArray.slice(0, ingredientArray.length - 1));
-    console.log("after slice", ingredientArray);
+
+    setIngredientArray(
+      ingredientArray.filter(
+        (ingredientNumber) => ingredientNumber !== parseInt(event.target.id)
+      )
+    );
   }
+
+  const hasMultipleIngredients = ingredientArray.length > 1;
 
   return (
     <form>
@@ -41,16 +48,19 @@ export default function CreateRecipe() {
       <div>
         Ingredients:
         <div>
-          {ingredientArray.map((_, index) => {
+          {ingredientArray.map((ingredientNumber) => {
+            const id = ingredientNumber;
             return (
-              <div key={index}>
+              <div key={id}>
                 <label htmlFor="name">Name: </label>
                 <input name="name"></input>
                 <label htmlFor="amount">Amount: </label>
                 <input name="amount"></input>
-                <button onClick={decrementIngredientCount}>
-                  Remove Ingredient
-                </button>
+                {hasMultipleIngredients && (
+                  <button id={id} onClick={decrementIngredientCount}>
+                    Remove Ingredient
+                  </button>
+                )}
               </div>
             );
           })}
