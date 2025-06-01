@@ -1,11 +1,30 @@
+import { useEffect, useState } from "react";
+
 import "./App.css";
+// import CreateRecipe from "./CreateRecipe";
 import RecipeCard from "./recipeCard";
 
 function App() {
+  const [fetchedRecipes, setFetchedRecipes] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000")
+      .then((response) => response.json())
+      .then((data) => {
+        setFetchedRecipes(data);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <div className="app">
       <h1>Family Recipes</h1>
-      <RecipeCard />
+      {fetchedRecipes.map(({ _id }) => (
+        <div key={_id}>
+          <RecipeCard />
+        </div>
+      ))}
+      {/* <CreateRecipe /> */}
     </div>
   );
 }
