@@ -2,26 +2,43 @@ import { useState } from "react";
 
 export default function CreateRecipe() {
   const [ingredientArray, setIngredientArray] = useState([1]);
+  const [instructionsArray, setInstructionsArray] = useState([1]);
 
   function incrementIngredientCount(event) {
     event.preventDefault();
     setIngredientArray([...ingredientArray, ingredientArray.length + 1]);
   }
 
-  function decrementIngredientCount(event) {
-    console.log({ id: event.target.id, ingredientArray });
+  function incrementInstructionsCount(event) {
+    event.preventDefault();
+    setInstructionsArray([...instructionsArray, instructionsArray.length + 1]);
+  }
 
+  function decrementIngredientCount(event) {
     event.preventDefault();
     if (ingredientArray.length === 1) return;
 
     setIngredientArray(
       ingredientArray.filter(
-        (ingredientNumber) => ingredientNumber !== parseInt(event.target.id)
+        (ingredientNumber) =>
+          ingredientNumber !== parseInt(event.target.id.match(/\d+/))
+      )
+    );
+  }
+
+  function decrementInstructionsCount(event) {
+    event.preventDefault();
+    if (instructionsArray.length === 1) return;
+
+    setInstructionsArray(
+      instructionsArray.filter(
+        (stepNumber) => stepNumber !== parseInt(event.target.id.match(/\d+/))
       )
     );
   }
 
   const hasMultipleIngredients = ingredientArray.length > 1;
+  const hasMultipleInstructions = instructionsArray.length > 1;
 
   return (
     <form>
@@ -49,7 +66,7 @@ export default function CreateRecipe() {
         Ingredients:
         <div>
           {ingredientArray.map((ingredientNumber) => {
-            const id = ingredientNumber;
+            const id = `ingredient-${ingredientNumber}`;
             return (
               <div key={id}>
                 <label htmlFor="name">Name: </label>
@@ -69,8 +86,22 @@ export default function CreateRecipe() {
       </div>
 
       <div>
-        <label htmlFor="instructions">Instructions: </label>
-        <input name="instructions"></input>
+        Instructions
+        {instructionsArray.map((stepNumber) => {
+          const id = `step-${stepNumber}`;
+          return (
+            <div key={id}>
+              <label htmlFor="instructions">Step: </label>
+              <input name="instructions"></input>
+              {hasMultipleInstructions && (
+                <button id={id} onClick={decrementInstructionsCount}>
+                  Remove Step
+                </button>
+              )}
+            </div>
+          );
+        })}
+        <button onClick={incrementInstructionsCount}>Add Step</button>
       </div>
     </form>
   );
