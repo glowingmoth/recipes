@@ -42,26 +42,29 @@ export default function CreateRecipe() {
 
   return (
     <form>
+      <h2>Create Recipe</h2>
       <div>
         <label htmlFor="title">Title: </label>
         <input name="title"></input>
       </div>
-
       <div>
         <label htmlFor="author">Author: </label>
         <input name="author"></input>
       </div>
-
       <div>
         <label htmlFor="servings">Servings: </label>
-        <input name="servings"></input>
+        <input
+          type="number"
+          name="servings"
+          id="servings"
+          min="1"
+          max="12"
+        ></input>
       </div>
-
       <div>
         <label htmlFor="description">Description: </label>
         <textarea name="description"></textarea>
       </div>
-
       <div>
         Ingredients:
         <div>
@@ -84,14 +87,13 @@ export default function CreateRecipe() {
         </div>
         <button onClick={incrementIngredientCount}>Add Ingredient</button>
       </div>
-
       <div>
         Instructions
-        {instructionsArray.map((stepNumber) => {
-          const id = `step-${stepNumber}`;
+        {instructionsArray.map((stepNumber, index) => {
+          const id = `step-${stepNumber}-${Date.now()}`;
           return (
             <div key={id}>
-              <label htmlFor="instructions">Step ({stepNumber}):</label>
+              <label htmlFor="instructions">Step ({index + 1}):</label>
               <input name="instructions"></input>
               {hasMultipleInstructions && (
                 <button id={id} onClick={decrementInstructionsCount}>
