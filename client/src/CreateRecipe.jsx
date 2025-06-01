@@ -91,7 +91,7 @@ export default function CreateRecipe() {
           const id = `step-${stepNumber}`;
           return (
             <div key={id}>
-              <label htmlFor="instructions">Step: </label>
+              <label htmlFor="instructions">Step ({stepNumber}):</label>
               <input name="instructions"></input>
               {hasMultipleInstructions && (
                 <button id={id} onClick={decrementInstructionsCount}>
