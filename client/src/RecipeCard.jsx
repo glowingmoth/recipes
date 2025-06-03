@@ -1,29 +1,5 @@
-export default function RecipeCard() {
-  // TODO: Replace this dummy data once DB connected properly
-  const recipe = {
-    title: "Gluten Free Pancakes",
-    author: "John S.",
-    servings: 6,
-    ingredients: [
-      { name: "gluten free flour", amount: "200g" },
-      { name: "egg", amount: "1" },
-      { name: "egg whites", amount: "200g" },
-      { name: "milk", amount: "500ml" },
-      { name: "psyllium husk", amount: "1 Tbsp" },
-      { name: "butter", amount: "2 Tbsp" },
-    ],
-    description:
-      "Light and fluffy and easy to make! This is an absolute family favourite. Top with a sweet spread of your choice, like maple syrup or jam.",
-    instructions: [
-      "In a large mixing bowl add the flour, eggs, milk and psyllium husk.",
-      "Use a handheld mixer or equivalent to mix all the ingredients in the bowl until smooth.",
-      "Heat a frying pan on low to medium heat and add 1 tsp of butter.",
-      "Once the pancake batter is smooth and slightly thick, use a scoop to pour the batter into the pan.",
-      "Let batter start to bubble before flipping, usually a 1-2 minutes.",
-    ],
-    tags: ["pasta", "italian", "quick"],
-    createdAt: "2025-05-28T12:00:00Z",
-  };
+export default function RecipeCard(props) {
+  const { recipe } = props;
 
   // TODO: Use URL from image host once connected
   return (
@@ -33,30 +9,27 @@ export default function RecipeCard() {
         className="cardImage"
         alt="Pancakes stacked on a plate"
       ></img>
-
       <div className="content">
         <h2>{recipe.title}</h2>
         <p>{recipe.description}</p>
       </div>
-
       <div className="bottom">
         <span>Author: {recipe.author}</span>
         <span>Created: {recipe.createdAt}</span>
       </div>
-
-      {/* <p>Serves: {recipe.servings}</p> */}
-      {/* Ingredients: */}
-      {/* {recipe.ingredients.map(({ name, amount }) => (
+      <p>Serves: {recipe.servings}</p>
+      Ingredients:
+      {Array.isArray(recipe.ingredients) && // TODO: Implement validation for the form to prevent this hack when form submission.
+        recipe.ingredients.map(({ name, amount }) => (
           <ul key={name}>
             <span>{name}</span>: <span>{amount}</span>
           </ul>
-        ))} */}
-      {/* <div>
-          Instructions:{" "}
-          {recipe.instructions.map((step, idx) => (
-            <p key={idx}>{step}</p>
-          ))}
-        </div> */}
+        ))}
+      <div>
+        Instructions:{" "}
+        {Array.isArray(recipe.instructions) && // TODO: Implement validation for the form to prevent this hack when form submission.
+          recipe.instructions.map((step, idx) => <p key={idx}>{step}</p>)}
+      </div>
     </div>
   );
 }

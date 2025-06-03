@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import "./App.css";
-// import CreateRecipe from "./CreateRecipe";
+import CreateRecipe from "./CreateRecipe";
 import RecipeCard from "./recipeCard";
 
 function App() {
@@ -19,12 +19,12 @@ function App() {
   return (
     <div className="app">
       <h1>Family Recipes</h1>
-      {fetchedRecipes.map(({ _id }) => (
-        <div key={_id}>
-          <RecipeCard />
+      {fetchedRecipes.map((recipe) => (
+        <div key={recipe._id}>
+          <RecipeCard recipe={recipe} />
         </div>
       ))}
-      {/* <CreateRecipe /> */}
+      <CreateRecipe />
     </div>
   );
 }
