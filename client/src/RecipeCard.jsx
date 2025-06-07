@@ -1,11 +1,11 @@
 export default function RecipeCard(props) {
   const { recipe } = props;
+  console.log(recipe);
 
-  // TODO: Use URL from image host once connected
   return (
     <div className="recipeCard">
       <img
-        src="/src/assets/pancake_placeholder.jpg"
+        src={recipe.imageUrl}
         className="cardImage"
         alt="Pancakes stacked on a plate"
       ></img>
