@@ -18,18 +18,28 @@ const port = 3000;
 
 // READ all
 app.get("/recipes", async (req, res) => {
-  let collection = db.collection("recipes");
-  let result = await collection.find({}).toArray();
-  res.send(result);
+  try {
+    let collection = db.collection("recipes");
+    let result = await collection.find({}).toArray();
+    res.status(200).send(result);
+  } catch (error) {
+    console.log("Failed to fetch recipes:", error);
+    res.status(500).send({ message: "Internal server error" });
+  }
 });
 
 // READ single
 app.get("/recipes/:recipeId", async (req, res) => {
-  let collection = db.collection("recipes");
-  let result = await collection
-    .find({ _id: new ObjectId(req.params.recipeId) })
-    .toArray();
-  res.send(result);
+  try {
+    let collection = db.collection("recipes");
+    let result = await collection
+      .find({ _id: new ObjectId(req.params.recipeId) })
+      .toArray();
+    res.status(200).res.send(result);
+  } catch (error) {
+    console.log("Failed to fetch single recipe:", error);
+    res.status(500).send({ message: "Internal server error" });
+  }
 });
 
 // CREATE
@@ -52,10 +62,24 @@ app.post("/recipe", upload.single("photo"), async (req, res) => {
 
     await db.collection("recipes").insertOne(body);
 
-    res.status(200).json({ message: "Recipe created" });
+    res.status(201).json({ message: "Recipe created" });
   } catch (error) {
-    console.error("Error in POST /recipe:", error);
-    res.status(500).send("Error processing recipe");
+    console.error("Error creating recipe:", error);
+    res.status(500).send("Internal server error");
+  }
+});
+
+// DELETE
+app.delete("/recipes/:recipeId", async (req, res) => {
+  try {
+    let collection = db.collection("recipes");
+    let result = await collection.deleteOne({
+      _id: new ObjectId(req.params.recipeId),
+    });
+    res.status(204).send(result); // TODO: Do I need the result here?
+  } catch (error) {
+    console.log("Failed to delete recipe:", error);
+    res.status(500).send({ message: "Internal server error" });
   }
 });
 
