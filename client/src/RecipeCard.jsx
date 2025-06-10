@@ -1,6 +1,5 @@
 export default function RecipeCard(props) {
   const { recipe } = props;
-  console.log(recipe);
 
   return (
     <div className="recipeCard">
