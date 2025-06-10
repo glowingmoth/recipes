@@ -35,7 +35,7 @@ app.get("/recipes/:recipeId", async (req, res) => {
     let result = await collection
       .find({ _id: new ObjectId(req.params.recipeId) })
       .toArray();
-    res.status(200).res.send(result);
+    res.status(200).send(result);
   } catch (error) {
     console.log("Failed to fetch single recipe:", error);
     res.status(500).send({ message: "Internal server error" });
@@ -80,6 +80,46 @@ app.delete("/recipes/:recipeId", async (req, res) => {
   } catch (error) {
     console.log("Failed to delete recipe:", error);
     res.status(500).send({ message: "Internal server error" });
+  }
+});
+
+// UPDATE
+app.put("/recipes/:recipeId", upload.single("photo"), async (req, res) => {
+  const { body, file } = req;
+  const updateData = { ...body };
+  delete updateData._id; // Do this to prevent updating an existing id
+
+  try {
+    const collection = db.collection("recipes");
+    const recipeId = new ObjectId(req.params.recipeId);
+    const existingRecipe = await collection.findOne({ _id: recipeId });
+
+    if (!existingRecipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    if (file) {
+      const streamUpload = () =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream((error, result) => {
+            if (error) return reject(error);
+            return resolve(result);
+          });
+          streamifier.createReadStream(file.buffer).pipe(stream);
+        });
+
+      const result = await streamUpload();
+      body.imageUrl = result.secure_url;
+
+      await cloudinary.uploader.destroy(existingRecipe.imageUrl);
+    }
+
+    await collection.updateOne({ _id: recipeId }, { $set: updateData });
+
+    res.status(200).json({ message: "Recipe updated" });
+  } catch (error) {
+    console.error("Failed to update recipe", error);
+    res.status(500).send("Internal server error");
   }
 });
 
