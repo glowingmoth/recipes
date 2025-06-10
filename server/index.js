@@ -6,6 +6,7 @@ import streamifier from "streamifier";
 
 import db from "./db/connection.js";
 import cloudinary from "./cloud-connection/cloudinaryConfig.js";
+import { ObjectId } from "mongodb";
 
 const app = express();
 
@@ -15,12 +16,23 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const port = 3000;
 
-app.get("/", async (req, res) => {
+// READ all
+app.get("/recipes", async (req, res) => {
   let collection = db.collection("recipes");
   let result = await collection.find({}).toArray();
   res.send(result);
 });
 
+// READ single
+app.get("/recipes/:recipeId", async (req, res) => {
+  let collection = db.collection("recipes");
+  let result = await collection
+    .find({ _id: new ObjectId(req.params.recipeId) })
+    .toArray();
+  res.send(result);
+});
+
+// CREATE
 app.post("/recipe", upload.single("photo"), async (req, res) => {
   const { body, file } = req;
   try {
