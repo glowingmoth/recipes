@@ -4,9 +4,11 @@ import cors from "cors";
 import "dotenv/config";
 import streamifier from "streamifier";
 
-import db from "./db/connection.js";
+import connectToDB from "./db/connection.js";
 import cloudinary from "./cloud-connection/cloudinaryConfig.js";
-import { ObjectId } from "mongodb";
+import Recipe from "./models/recipe.js";
+
+connectToDB();
 
 const app = express();
 
@@ -19,8 +21,7 @@ const port = 3000;
 // READ all
 app.get("/recipes", async (req, res) => {
   try {
-    let collection = db.collection("recipes");
-    let result = await collection.find({}).toArray();
+    let result = await Recipe.find({});
     res.status(200).send(result);
   } catch (error) {
     console.log("Failed to fetch recipes:", error);
@@ -31,10 +32,7 @@ app.get("/recipes", async (req, res) => {
 // READ single
 app.get("/recipes/:recipeId", async (req, res) => {
   try {
-    let collection = db.collection("recipes");
-    let result = await collection
-      .find({ _id: new ObjectId(req.params.recipeId) })
-      .toArray();
+    let result = await Recipe.find({ _id: req.params.recipeId });
     res.status(200).send(result);
   } catch (error) {
     console.log("Failed to fetch single recipe:", error);
@@ -60,7 +58,8 @@ app.post("/recipe", upload.single("photo"), async (req, res) => {
       body.imageUrl = result.secure_url; // The secure image url from cloudinary
     }
 
-    await db.collection("recipes").insertOne(body);
+    const newRecipe = new Recipe(req.body);
+    await newRecipe.save();
 
     res.status(201).json({ message: "Recipe created" });
   } catch (error) {
@@ -72,11 +71,8 @@ app.post("/recipe", upload.single("photo"), async (req, res) => {
 // DELETE
 app.delete("/recipes/:recipeId", async (req, res) => {
   try {
-    let collection = db.collection("recipes");
-    let result = await collection.deleteOne({
-      _id: new ObjectId(req.params.recipeId),
-    });
-    res.status(204).send(result); // TODO: Do I need the result here?
+    const result = await Recipe.deleteOne({ _id: req.params.recipeId }); // TODO: need this assigned to result?
+    res.status(204).json({ message: "Recipe sucessfully deleted" });
   } catch (error) {
     console.log("Failed to delete recipe:", error);
     res.status(500).send({ message: "Internal server error" });
@@ -85,15 +81,15 @@ app.delete("/recipes/:recipeId", async (req, res) => {
 
 // UPDATE
 app.put("/recipes/:recipeId", upload.single("photo"), async (req, res) => {
-  const { body, file } = req;
-  const updateData = { ...body };
+  const { body, file, params } = req;
+  const { recipeId } = params;
+
+  const updateData = { ...body }; // Shallow copy to prevent mutating original request body
   delete updateData._id; // Do this to prevent updating an existing id
 
-  try {
-    const collection = db.collection("recipes");
-    const recipeId = new ObjectId(req.params.recipeId);
-    const existingRecipe = await collection.findOne({ _id: recipeId });
+  const existingRecipe = await Recipe.findById(recipeId);
 
+  try {
     if (!existingRecipe) {
       return res.status(404).json({ message: "Recipe not found" });
     }
@@ -114,7 +110,8 @@ app.put("/recipes/:recipeId", upload.single("photo"), async (req, res) => {
       await cloudinary.uploader.destroy(existingRecipe.imageUrl);
     }
 
-    await collection.updateOne({ _id: recipeId }, { $set: updateData });
+    Object.assign(existingRecipe, updateData);
+    await existingRecipe.save();
 
     res.status(200).json({ message: "Recipe updated" });
   } catch (error) {
